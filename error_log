@@ -1,0 +1,1 @@
+[25-Feb-2016 05:53:45 America/Chicago] PHP Fatal error:  Call to undefined function mysqli_init() in /home/mtestlink/public_html/online_exam/system/database/drivers/mysqli/mysqli_driver.php on line 126
