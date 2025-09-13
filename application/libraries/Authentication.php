@@ -28,9 +28,9 @@ class Authentication
 	function logged_in() 
 	{     
 		$CI =& get_instance();     
-		//return ($CI->session->userdata("role_id")) ? true : false;
-        $user_id = get_cookie('user_id', TRUE);
-        return ($user_id) ? true : false;
+		return ($CI->session->userdata("role_id")) ? true : false;
+        // //$user_id = get_cookie('user_id', TRUE);
+        // return ($user_id) ? true : false;
 	}
 
 	function chklogin($user_id) 
@@ -55,8 +55,8 @@ class Authentication
 			$CI->session->set_userdata("image_name", $query->row()->image_name);
 			$CI->session->set_userdata("ISlogin", true);  
 			$CI->session->sess_expire_on_close = TRUE;
-            $value = $query->row()->user_id;
-            set_cookie('user_id', $value, time()+3600*24);
+            // $value = $query->row()->user_id;
+            // set_cookie('user_id', $value, time()+3600*24);
 			return true;  
 		} 
 	}
