@@ -10,7 +10,7 @@ class Login_controller extends CI_Controller
 		parent::__construct();
 		$this->clear_cache();
 		$this->load->library('authentication');
-		$this->load->library('encrypt');
+		$this->load->library('encryption');
 		date_default_timezone_set('Asia/Kolkata');
 		header("Access-Control-Allow-Origin: *");
         $this->load->helper('cookie');
@@ -23,7 +23,7 @@ class Login_controller extends CI_Controller
 		$key = 'test';
 
 		if ($this->authentication->logged_in() == FALSE) {
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 2;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			$data['title'] = "User Login";
@@ -46,12 +46,7 @@ class Login_controller extends CI_Controller
 		$key = 'test';
 
 		if ($this->authentication->logged_in() == FALSE) {
-			// 	$data['key_string'] = $this->encrypt->encode($msg, $key);
-			// 	$data['role']=2;
-			// 	$this->session->set_userdata("secret_key", $data['key_string']);
-			// 	$data['title']="User Login";
-			// $this->load->view("login",$data);
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 2;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			$data['title'] = "User Login";
@@ -68,7 +63,7 @@ class Login_controller extends CI_Controller
 		$key = 'test';
 
 		if ($this->authentication->logged_in() == FALSE) {
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 1;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			$data['title'] = "Admin Login";
@@ -82,12 +77,12 @@ class Login_controller extends CI_Controller
 	public function load($msg = 'online_test', $key = 'test')
 	{
 		$this->load->model("master_model");
-		$data['key_string'] = $this->encrypt->encode($msg, $key);
-		$secretkey = $this->encrypt->encode($msg, $key);
+		$data['key_string'] = $this->encryption->encrypt($msg);
+		$secretkey = $this->encryption->encrypt($msg);
 		$this->session->set_userdata("secret_key", $data['key_string']);
 		$state = $this->authentication->logged_in();
 		if ($state == false) {
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 1;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			$data['title'] = "Admin Login";
@@ -126,7 +121,7 @@ class Login_controller extends CI_Controller
 					} else {
 						$msg = 'online_test';
 						$key = 'test';
-						$data['key_string'] = $this->encrypt->encode($msg, $key);
+						$data['key_string'] = $this->encryption->encrypt($msg);
 						$this->session->set_userdata("secret_key", $data['key_string']);
 						$emp_dept = $this->master_model->getDeptFromUserId($userId);
 						$test_data = $this->test_model_g->getConfiguration($userId, $emp_dept);
@@ -207,12 +202,12 @@ class Login_controller extends CI_Controller
 	public function admin_load($msg = 'online_test', $key = 'test')
 	{
 		$this->load->model("master_model");
-		$data['key_string'] = $this->encrypt->encode($msg, $key);
-		$secretkey = $this->encrypt->encode($msg, $key);
+		$data['key_string'] = $this->encryption->encrypt($msg);
+		$secretkey = $this->encryption->encrypt($msg);
 		$this->session->set_userdata("secret_key", $data['key_string']);
 		$state = $this->authentication->logged_in();
 		if ($state == false) {
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 1;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			$data['title'] = "Admin Login";
@@ -294,7 +289,7 @@ class Login_controller extends CI_Controller
 		} else {
 			$msg = 'online_test';
 			$key = 'test';
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 1;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			// 	$data['title']="Admin Login";
@@ -357,7 +352,7 @@ class Login_controller extends CI_Controller
 		} else {
 			$msg = 'online_test';
 			$key = 'test';
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 1;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			// 	$data['title']="Admin Login";
@@ -417,7 +412,7 @@ class Login_controller extends CI_Controller
 		} else {
 			$msg = 'online_test';
 			$key = 'test';
-			$data['key_string'] = $this->encrypt->encode($msg, $key);
+			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 1;
 			$this->session->set_userdata("secret_key", $data['key_string']);
 			// 	$data['title']="Admin Login";
@@ -505,8 +500,8 @@ class Login_controller extends CI_Controller
 			if (!$valid['state']) {
 				redirect(BASEURL2, 'user');
 			} else {
-				redirect(base_url('user'));
-			}
+                redirect(base_url('user'));
+            }
 		} else {
 			redirect(BASEURL2);
 		}
