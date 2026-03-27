@@ -527,6 +527,7 @@ WHERE ua.test_id = ? AND ua.display = 'Y'
             WHERE test_id = ?
         )
         AND DATE(tp.punch_date) = ?
+         AND tdm.dept_master_name != 'Information Technology' 
         ORDER BY `Employee_Name` ASC
     ";
 

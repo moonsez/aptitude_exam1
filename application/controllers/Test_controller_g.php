@@ -629,33 +629,5 @@ class Test_controller_g extends CI_Controller
         }
     }
 
-    public function submit_test_if_user_not_attempted()
-    {
-        $this->load->model("test_model_g");
-        $this->load->model("master_model");
-        $test_data = $this->test_model_g->getTodayExamUserByDateByDept();
 
-        if (!empty($test_data)) {
-            foreach ($test_data as $test) {
-                $test_key = $test['key'];
-                $dept_wise_user = $test['dept_wise_user'];
-                $end_time = date('Y-m-d H:i:s', strtotime($test_key->test_datetime . " +{$test_key->test_time} minutes"));
-
-                foreach ($dept_wise_user as $dept) {
-                    $user_test = $this->master_model->selectDetailsWhrWhr('tbl_user_test', 'user_id', $dept->user_id, 'test_id', $test_key->test_configuration_id);
-                    if (empty($user_test)) {
-                        $user_test_data = array(
-                            'test_id' => $test_key->test_configuration_id,
-                            'user_id' => $dept->user_id,
-                            'test_date' => date('Y-m-d'),
-                            'test_status' => 'submitted',
-                            'start_time' => $end_time,
-                            'submitted_time' => $end_time
-                        );
-                        $this->db->insert('tbl_user_test', $user_test_data);
-                    }
-                }
-            }
-        }
-    }
 }

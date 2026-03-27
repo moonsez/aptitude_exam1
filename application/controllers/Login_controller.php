@@ -46,6 +46,11 @@ class Login_controller extends CI_Controller
 		$key = 'test';
 
 		if ($this->authentication->logged_in() == FALSE) {
+			// 	$data['key_string'] = $this->encryption->encrypt($msg);
+			// 	$data['role']=2;
+			// 	$this->session->set_userdata("secret_key", $data['key_string']);
+			// 	$data['title']="User Login";
+			// $this->load->view("login",$data);
 			$data['key_string'] = $this->encryption->encrypt($msg);
 			$data['role'] = 2;
 			$this->session->set_userdata("secret_key", $data['key_string']);
@@ -500,8 +505,8 @@ class Login_controller extends CI_Controller
 			if (!$valid['state']) {
 				redirect(BASEURL2, 'user');
 			} else {
-                redirect(base_url('user'));
-            }
+				redirect(base_url('user'));
+			}
 		} else {
 			redirect(BASEURL2);
 		}

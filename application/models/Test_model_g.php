@@ -6,7 +6,7 @@ class Test_model_g extends CI_Model
 
 	public function user_data($userId)
 	{
-		$query = $this->db->query('SELECT tu.user_id,tt.station_type_name,concat((tir.salutation),(" "),(tir.firstname),(" "),(tir.lastname)) emp_name,tu.designation,tu.organisation,tir.image_name,tdm.dept_master_name FROM tbl_userinfo tu LEFT JOIN tbl_employee_personal_details tir ON tu.user_id=tir.user_id LEFT JOIN tbl_station_type tt ON tt.station_type_id=tu.emp_station_id LEFT JOIN tbl_user_station_dept tusd ON tusd.usd_id = tu.usd_id LEFT JOIN tbl_department_station tds ON tds.stat_dept_id = tusd.stat_dept_id LEFT JOIN tbl_department_master tdm ON tdm.dept_master_id = tds.dept_master_id WHERE tu.user_id=?', array($userId));
+		$query = $this->db->query('SELECT tu.user_id,tt.station_type_name,concat((tir.salutation),(" "),(tir.firstname),(" "),(tir.lastname)) emp_name,tu.designation,tu.organisation,tir.image_name,tdm.dept_master_name,tir.gender FROM tbl_userinfo tu LEFT JOIN tbl_employee_personal_details tir ON tu.user_id=tir.user_id LEFT JOIN tbl_station_type tt ON tt.station_type_id=tu.emp_station_id LEFT JOIN tbl_user_station_dept tusd ON tusd.usd_id = tu.usd_id LEFT JOIN tbl_department_station tds ON tds.stat_dept_id = tusd.stat_dept_id LEFT JOIN tbl_department_master tdm ON tdm.dept_master_id = tds.dept_master_id WHERE tu.user_id=?', array($userId));
 
 		if ($query->num_rows() == 1) {
 			return $query->row();
@@ -565,47 +565,6 @@ WHERE ts.display = 'Y'
         }
         else
         {
-            return false;
-        }
-    }
-
-    public function getTodayExamUserByDateByDept()
-    {
-        $query = $this->db->query("SELECT ttc.*
-            FROM tbl_test_configuration ttc
-            WHERE DATE_FORMAT(ttc.test_datetime,'%Y-%m-%d') = CURRENT_DATE AND ttc.display = 'Y'");
-
-        $data = [];
-        if ($query->num_rows() > 0) {
-            foreach ($query->result() as $key) {
-                $dept_master_id = $key->dept_master_id;
-
-                $sql = "SELECT tepd.emp_id, tu.user_id, tu.username, CONCAT(tepd.salutation,' ',tepd.firstname,' ', tepd.lastname) AS fullname,
-                           tet.title, tdm.dept_master_name, tsd.station_name, tst.station_type_name 
-                    FROM tbl_userinfo AS tu
-                    JOIN tbl_employee_personal_details AS tepd ON tu.user_id = tepd.user_id
-                    JOIN tbl_user_emp_type AS tuet ON tu.uet_id = tuet.uet_id
-                    JOIN tbl_employee_type AS tet ON tuet.emp_type_id = tet.emp_type_id
-                    JOIN tbl_user_station_dept AS tusd ON tu.usd_id = tusd.usd_id
-                    JOIN tbl_department_station AS tds ON tusd.stat_dept_id = tds.stat_dept_id
-                    JOIN tbl_department_master AS tdm ON tds.dept_master_id = tdm.dept_master_id
-                    JOIN tbl_station_details AS tsd ON tds.station_id = tsd.station_id
-                    JOIN tbl_station_type AS tst ON tsd.station_type_id = tst.station_type_id
-                    WHERE tu.account_status = 'activate' AND tu.display = 'Y' AND tepd.display = 'Y'";
-
-                if ($dept_master_id != 0) {
-                    $sql .= " AND tdm.dept_master_id IN (?)";
-                    $sub_query = $this->db->query($sql, array($dept_master_id));
-                } else {
-                    $sub_query = $this->db->query($sql);
-                }
-
-                if ($sub_query->num_rows() > 0) {
-                    $data[] = array('key' => $key, 'dept_wise_user' => $sub_query->result());
-                }
-            }
-            return $data;
-        } else {
             return false;
         }
     }

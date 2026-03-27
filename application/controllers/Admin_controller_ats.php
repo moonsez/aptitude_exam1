@@ -741,6 +741,7 @@ class Admin_controller_ats extends CI_Controller
         }
     
         $data['user_result'] = $user_result;
+        $data['test_id'] = $test_id;
         $this->load->view('admin/view_result_page1', $data);
     }
     
@@ -765,6 +766,22 @@ class Admin_controller_ats extends CI_Controller
 
         // Call the function to generate the Excel file
         $this->excel->generate_question_report($data);
+    }
+
+    public function export_marks_report($test_id)
+    {
+        ini_set('max_execution_time', 60000);
+        $this->load->library('excel');
+        if (empty($test_id)) {
+            echo "Test ID missing.";
+            return;
+        }
+        $data['user_result'] = $this->test_model_r->view_test_result($test_id);
+        if (empty($data['user_result'])) {
+            echo "No results found for this test.";
+            return;
+        }
+        $this->excel->generate_test_report($data);
     }
 
 

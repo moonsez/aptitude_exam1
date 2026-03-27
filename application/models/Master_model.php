@@ -413,20 +413,5 @@ class Master_model extends CI_Model {
 			return false;
 		}
 	}
-
-    public function selectDetailsWhrWhr($tblname,$where,$condition,$where1,$condition1)
-    {
-        $this->db->where($where,$condition);
-        $this->db->where($where1,$condition1);
-        $this->db->where('display','Y');
-        $query = $this->db->get($tblname);
-        if($query->num_rows()>0)
-        {
-            return $query->row(0);
-        }
-        else
-        {
-            return false;
-        }
-    }
+	
 }

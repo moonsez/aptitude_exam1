@@ -108,8 +108,8 @@
 												<div class="portlet-title">
 													<div class="caption">
 														<span class=" bold uppercase" style="font-size: 15px;">Test Name :
-															Aptitude Test
-															<?php //echo (isset($section->section_name) && !empty($section->section_name)) ?$section->section_name:'';	 ?></span>
+
+															<?php echo (!empty($key['question_list'][0]['question']->test_name)) ? $key['question_list'][0]['question']->test_name : ''; ?></span>
 													</div>
 												</div>
 											</center>

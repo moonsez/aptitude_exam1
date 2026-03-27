@@ -192,7 +192,8 @@ $route['admin/get_designations'] = 'percent_result/get_designations';
 $route['get_location'] = 'percent_result/get_location';
 $route['get_empname'] = 'percent_result/get_empname';
 
-$route['export_test_report/(:any)'] = 'percent_result/export_test_report/$1';
+// $route['export_test_report/(:any)'] = 'percent_result/export_test_report/$1';
+$route['export_marks_report/(:num)'] = 'admin_controller_ats/export_marks_report/$1';
 $route['export_percentage_report/(:any)'] = 'percent_result/export_percentage_report/$1';
 $route['question_wise_report/(:any)'] = 'percent_result/question_wise_report/$1';
 $route['emp_wise_report'] = 'percent_result/emp_wise_report';
@@ -223,6 +224,6 @@ $route['export_attendance_report/(:any)'] = 'percent_result/export_attendance_re
 // $route['intern_view_results/:num'] = 'percent_result/intern_view_results/$1';
 // $route['intern_download_certificate/:num'] = 'percent_result/intern_download_certificate/$1';
 
-$route['submit_test_if_user_not_attempted'] = 'test_controller_g/submit_test_if_user_not_attempted';
+// $route['submit_test_if_user_not_attempted'] = 'test_controller_g/submit_test_if_user_not_attempted';
 
 

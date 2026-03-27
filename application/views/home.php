@@ -131,15 +131,47 @@
 									</div>
 								</div>
 								<div class="col-md-3">
-									<center><img
-											src="http://192.168.0.7/uploads/emp_image/<?php echo $user_data->image_name ?>"
-											style="width: 150px; height: 180px; border: 5px solid #777;  margin-top: 15px;">
+									<center>
+										<?php
+										if (isset($user_data->image_name) && !empty($user_data->image_name)) {
+											$filename = '../uploads/emp_image/' . $user_data->image_name;
+											if (file_exists($filename)) { ?>
+												<img alt="Employee profile picture" class="upload_newimage"
+													src="http://10.10.1.15/uploads/emp_image/<?php echo (isset($user_data->image_name) ? $user_data->image_name : '') ?>"
+													style="width: 150px; height: 180px; border: 5px solid #777;  margin-top: 15px;">
+											<?php } else { ?>
+
+												<?php if (isset($user_data->gender) && strtolower($user_data->gender) == 'male') { ?>
+													<img alt="Employee profile picture" class="upload_newimage"
+														src="../uploads/emp_image/male_default.png"
+														style="width: 150px; height: 180px; border: 5px solid #777;  margin-top: 15px;">
+												<?php } else { ?>
+													<img alt="Employee profile picture" class="upload_newimage"
+														src="../uploads/emp_image/female_default.png"
+														style="width: 150px; height: 180px; border: 5px solid #777;  margin-top: 15px;">
+												<?php } ?>
+											<?php }
+										} else { ?>
+
+											<?php if (isset($user_data->gender) && strtolower($user_data->gender) == 'male') { ?>
+												<img alt="Employee profile picture" class="upload_newimage"
+													src="<?php echo base_url(); ?>../uploads/emp_image/male_default.png"
+													style="width: 150px; height: 180px; border: 5px solid #777;  margin-top: 15px;">
+											<?php } else { ?>
+												<img alt="Employee profile picture" class="upload_newimage"
+													src="<?php echo base_url(); ?>../uploads/emp_image/female_default.png"
+													style="width: 150px; height: 180px; border: 5px solid #777;  margin-top: 15px;">
+											<?php } ?>
+
+
+
+										<?php } ?>
 									</center>
 								</div>
 								<div class="col-md-2"></div>
 							</div>
 							<div class="row">
-								<div class="col-md-3">
+								<!-- <div class="col-md-3">
 									<?php if (!empty($test_data) && !empty($final_datetime) && date("Y-m-d H:i:s") > $final_datetime) { ?>
                                         <a type="button" class="btn green pull-right"
                                             href="<?php echo base_url(); ?>user_test_res" style="float:center;">Test
@@ -153,7 +185,19 @@
                                            href="<?php echo base_url(); ?>user_test_res" style="float:center;">Test
                                             Results</a>
 									<?php } ?>
-								</div>
+								</div> -->
+
+								<div class="col-md-3">
+    <?php if (
+        ( !empty($final_datetime) && date("Y-m-d H:i:s") > $final_datetime )
+        || empty($final_datetime)
+    ) { ?>
+        <a type="button" class="btn green pull-right"
+           href="<?php echo base_url(); ?>user_test_res">
+           Test Results
+        </a>
+    <?php } ?>
+</div>
 								<div class="col-md-3">
 									<?php if (isset($test_data) && !empty($test_data) && !empty($final_datetime) && $final_datetime >= $test_data->test_datetime && date('Y-m-d H:i:s') <= $final_datetime) { ?>
 										<a type="button" class="btn blue pull-right"

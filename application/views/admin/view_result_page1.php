@@ -51,7 +51,7 @@
 
 	.select2-container .select2-dropdown .select2-results {
 		max-height: 50px !important;
-		/* 👈 Set your desired height */
+		/*Set your desired height */
 		overflow-y: auto !important;
 	}
 </style>
@@ -90,7 +90,16 @@
 											<!-- <button id="generate_excel" onclick="saveAsExcel()"
 												class="btn red btn-danger"> Export To Excel</button> -->
 
-												<button onclick="exportTableToExcel()" class="btn btn-danger float-right">Export to Excel</button>
+												<div class="actions">
+												<button id="generate_excel" onclick="exportToExcel()" class="btn red btn-danger" style="margin-top: 0px;">
+													Export To Excel
+												</button>
+											</div>
+
+											 <!-- <div class="actions">
+			                    <button id="generate_excel" onclick="saveAsExcel()" class="btn btn-danger">
+			            		Export To Excel</button>
+			                </div> -->
 										</div>
 									</div>
 								</div>
@@ -138,11 +147,13 @@
 												<th style="text-align:center;">Negative Marks</th>
 												<th style="text-align:center;">Correct</th>
 												<th style="text-align:center;">Wrong</th>
-												<th style="text-align:center;">Marks Obtained</th>
 												<th style="text-align:center;">Not Attempted</th>
+												<th style="text-align:center;">Marks Obtained</th>
+												<th style="text-align: center;">Percentage</th>
 												<th style="text-align:center;">Exam Start Time</th>
 												<th style="text-align:center;">Exam End Time</th>
 												<th style="text-align:center;">Response Time</th>
+												<th style="text-align: center;">Late Penalty</th>
 												<th style="text-align:center;">Result</th>
 												<th style="text-align:center;">Rank</th>
 											</tr>
@@ -158,11 +169,24 @@
 													$wrong_marks = $user->incorrect_count * $user->per_mark;
 													$correct_marks = $user->correct_count * $per_que_mark;
 													$marks_obtained = $correct_marks - $wrong_marks;
+													$percentage = ($marks_obtained / $user->total_mark) * 100;
 
 													$not_attempted = $user->question_count - ($user->correct_count + $user->incorrect_count);
 													$result = ($marks_obtained / $user->total_mark) * 100 >= 35 ? 'PASS' : 'FAIL';
+													
+													$late_penalty = 0;
 
-													// Assign medal based on rank
+													if (!empty($user->start_time)) {
+														$exam_date  = date('Y-m-d', strtotime($user->start_time));
+														$cutoff_time = $exam_date . ' 14:01:01';
+														$start_timestamp  = strtotime($user->start_time);
+														$cutoff_timestamp = strtotime($cutoff_time);
+														if ($start_timestamp > $cutoff_timestamp) {
+															$diff_seconds = $start_timestamp - $cutoff_timestamp;
+															$minutes_late = ceil($diff_seconds / 60);
+															$late_penalty = $minutes_late * 10;
+														}
+													}
 													$medal = '';
 													if ($rank == 1)
 														$medal = '';
@@ -170,7 +194,7 @@
 														$medal = '';
 													elseif ($rank == 3)
 														$medal = '';
-													?>
+											?>
 													<tr>
 														<td style="text-align:center;"><?php echo $sr_no++; ?></td>
 														<td style="text-align:center;"><?php echo $user->fullname . $medal; ?>
@@ -190,9 +214,10 @@
 														<td style="text-align:center;"><?php echo $user->correct_count; ?></td>
 														<td style="text-align:center;"><?php echo $user->incorrect_count; ?>
 														</td>
-														<td style="text-align:center;"><?php echo round($marks_obtained, 2); ?>
-														</td>
 														<td style="text-align:center;"><?php echo $not_attempted; ?></td>
+														<td style="text-align:center;"><?php echo round($marks_obtained, 2); ?>
+														<td style="text-align: center;"><?php echo $percentage . '%'; ?></td>
+														</td>
 														<td style="text-align:center;">
 															<?php echo isset($user->start_time) ? date(' H:i:s', strtotime($user->start_time)) : ''; ?>
 														</td>
@@ -200,6 +225,8 @@
 															<?php echo isset($user->submitted_time) ? date(' H:i:s', strtotime($user->submitted_time)) : ''; ?>
 														</td>
 														<td style="text-align:center;"><?php echo $user->response_time; ?></td>
+														<td style="text-align: center;"><?php echo $late_penalty; ?></td>
+														</td>
 														<td style="text-align:center;">
 															<span
 																class="label label-<?php echo $result === 'PASS' ? 'success' : 'danger'; ?>">
@@ -208,7 +235,7 @@
 														</td>
 														<td style="text-align:center;"><?php echo 'Rank ' . $rank++; ?></td>
 													</tr>
-													<?php
+											<?php
 												}
 											}
 											?>
@@ -321,6 +348,90 @@
 
 	</script>
 
+
+<!-- <script>
+	   function saveAsExcel() {
+    $("#export_result").table2excel({
+        exclude: ".noExl",
+        name: "Result Report",
+        filename: "Result_Report",
+        fileext: ".xls",
+        preserveColors: false
+    });
+}
+</script> -->
+
+<!-- <script>
+function saveAsExcel() {
+
+    // Loop through table rows
+    $("#export_result tbody tr").each(function () {
+
+       
+        var departmentText = $(this).find("td:eq(2)").text().trim();
+
+        if (departmentText === "Information Technology") {
+            $(this).addClass("noExl");  
+        }
+    });
+
+    $("#export_result").table2excel({
+        exclude: ".noExl",
+        name: "Result Report",
+        filename: "Result_Report",
+        fileext: ".xls",
+        preserveColors: false
+    });
+
+  
+    $("#export_result tbody tr").removeClass("noExl");
+}
+</script> -->
+
+
+<script>
+function saveAsExcel() {
+
+    
+    $("#export_result tbody tr").each(function () {
+        var $srCell = $(this).find("td:eq(0)"); 
+        $srCell.attr("data-old-sr", $srCell.text().trim());
+    });
+
+    
+    $("#export_result tbody tr").each(function () {
+        var dept = $(this).find("td:eq(2)").text().trim().toLowerCase(); 
+        if (dept === "information technology") {
+            $(this).addClass("noExl");
+        }
+    });
+
+    
+    var newSr = 1;
+    $("#export_result tbody tr").not(".noExl").each(function () {
+        $(this).find("td:eq(0)").text(newSr++);
+    });
+
+    
+    $("#export_result").table2excel({
+        exclude: ".noExl",
+        name: "Result Report",
+        filename: "Result_Report",
+        fileext: ".xls",
+        preserveColors: false
+    });
+
+   
+    $("#export_result tbody tr").each(function () {
+        var $srCell = $(this).find("td:eq(0)");
+        $srCell.text($srCell.attr("data-old-sr"));
+        $srCell.removeAttr("data-old-sr");
+    });
+
+    $("#export_result tbody tr").removeClass("noExl");
+}
+</script>
+
 	<!-- Filters -->
 
 
@@ -403,6 +514,12 @@
 //     XLSX.writeFile(wb, "SEZ_Login_Record.xlsx");
 // }
 
+	</script>
+	<script>
+		function exportToExcel() {
+			var test_id = "<?php echo isset($test_id) ? $test_id : ''; ?>";
+			window.location.href = "<?php echo base_url('export_marks_report'); ?>/" + test_id;
+		}
 	</script>
 
 	<!-- END JAVASCRIPTS -->
