@@ -97,18 +97,18 @@ class PHPExcel_Shared_OLE
 	{
 		$fh = fopen($file, "r");
 		if (!$fh) {
-			throw new PHPExcel_Reader_Exception("Can't open file $file");
+			throw new Exception("Can't open file $file");
 		}
 		$this->_file_handle = $fh;
 
 		$signature = fread($fh, 8);
 		if ("\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1" != $signature) {
-			throw new PHPExcel_Reader_Exception("File doesn't seem to be an OLE container.");
+			throw new Exception("File doesn't seem to be an OLE container.");
 		}
 		fseek($fh, 28);
 		if (fread($fh, 2) != "\xFE\xFF") {
 			// This shouldn't be a problem in practice
-			throw new PHPExcel_Reader_Exception("Only Little-Endian encoding is supported.");
+			throw new Exception("Only Little-Endian encoding is supported.");
 		}
 		// Size of blocks and short blocks in bytes
 		$this->bigBlockSize = pow(2, self::_readInt2($fh));
@@ -287,7 +287,7 @@ class PHPExcel_Shared_OLE
 				$pps = new PHPExcel_Shared_OLE_PPS_File($name);
 				break;
 			default:
-				continue;
+				continue 2;
 			}
 			fseek($fh, 1, SEEK_CUR);
 			$pps->Type    = $type;
@@ -447,7 +447,7 @@ class PHPExcel_Shared_OLE
 	{
 		$rawname = '';
 		for ($i = 0; $i < strlen($ascii); ++$i) {
-			$rawname .= $ascii{$i} . "\x00";
+			$rawname .= $ascii[$i] . "\x00";
 		}
 		return $rawname;
 	}
@@ -461,43 +461,90 @@ class PHPExcel_Shared_OLE
 	* @param integer $date A timestamp
 	* @return string The string for the OLE container
 	*/
+	// public static function LocalDate2OLE($date = null)
+	// {
+	// 	if (!isset($date)) {
+	// 		return "\x00\x00\x00\x00\x00\x00\x00\x00";
+	// 	}
+
+	// 	// factor used for separating numbers into 4 bytes parts
+	// 	$factor = pow(2, 32);
+
+	// 	// days from 1-1-1601 until the beggining of UNIX era
+	// 	$days = 134774;
+	// 	// calculate seconds
+	// 	$big_date = $days*24*3600 + gmmktime(date("H",$date),date("i",$date),date("s",$date),
+	// 										 date("m",$date),date("d",$date),date("Y",$date));
+	// 	// multiply just to make MS happy
+	// 	$big_date *= 10000000;
+
+	// 	$high_part = floor($big_date / $factor);
+	// 	// lower 4 bytes
+	// 	$low_part = floor((($big_date / $factor) - $high_part) * $factor);
+
+	// 	// Make HEX string
+	// 	$res = '';
+
+	// 	for ($i = 0; $i < 4; ++$i) {
+	// 		$hex = $low_part % 0x100;
+	// 		$res .= pack('c', $hex);
+	// 		$low_part /= 0x100;
+	// 	}
+	// 	for ($i = 0; $i < 4; ++$i) {
+	// 		$hex = $high_part % 0x100;
+	// 		$res .= pack('c', $hex);
+	// 		$high_part /= 0x100;
+	// 	}
+	// 	return $res;
+	// }
+
+
 	public static function LocalDate2OLE($date = null)
-	{
-		if (!isset($date)) {
-			return "\x00\x00\x00\x00\x00\x00\x00\x00";
-		}
+{
+    if (!isset($date)) {
+        return "\x00\x00\x00\x00\x00\x00\x00\x00";
+    }
 
-		// factor used for separating numbers into 4 bytes parts
-		$factor = pow(2, 32);
+    // factor used for separating numbers into 4 bytes parts
+    $factor = pow(2, 32);
 
-		// days from 1-1-1601 until the beggining of UNIX era
-		$days = 134774;
-		// calculate seconds
-		$big_date = $days*24*3600 + gmmktime(date("H",$date),date("i",$date),date("s",$date),
-											 date("m",$date),date("d",$date),date("Y",$date));
-		// multiply just to make MS happy
-		$big_date *= 10000000;
+    // days from 1-1-1601 until UNIX epoch
+    $days = 134774;
 
-		$high_part = floor($big_date / $factor);
-		// lower 4 bytes
-		$low_part = floor((($big_date / $factor) - $high_part) * $factor);
+    // calculate seconds
+    $big_date = $days * 24 * 3600 + gmmktime(
+        date("H", $date),
+        date("i", $date),
+        date("s", $date),
+        date("m", $date),
+        date("d", $date),
+        date("Y", $date)
+    );
 
-		// Make HEX string
-		$res = '';
+    // multiply for OLE
+    $big_date *= 10000000;
 
-		for ($i = 0; $i < 4; ++$i) {
-			$hex = $low_part % 0x100;
-			$res .= pack('c', $hex);
-			$low_part /= 0x100;
-		}
-		for ($i = 0; $i < 4; ++$i) {
-			$hex = $high_part % 0x100;
-			$res .= pack('c', $hex);
-			$high_part /= 0x100;
-		}
-		return $res;
-	}
+    
+    $high_part = (int) floor($big_date / $factor);
+    $low_part  = (int) floor((($big_date / $factor) - $high_part) * $factor);
 
+    $res = '';
+
+   
+    for ($i = 0; $i < 4; ++$i) {
+        $hex = (int) ($low_part % 0x100);
+        $res .= pack('c', $hex);
+        $low_part = (int) ($low_part / 0x100);
+    }
+
+    for ($i = 0; $i < 4; ++$i) {
+        $hex = (int) ($high_part % 0x100);
+        $res .= pack('c', $hex);
+        $high_part = (int) ($high_part / 0x100);
+    }
+
+    return $res;
+}
 	/**
 	* Returns a timestamp from an OLE container's date
 	*
