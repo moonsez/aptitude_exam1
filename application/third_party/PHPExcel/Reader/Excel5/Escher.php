@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2014 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Reader_Excel5
- * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.8.0, 2014-03-02
+ * @version    1.7.7, 2012-05-19
  */
 
 /**
@@ -30,7 +30,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Reader_Excel5
- * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Reader_Excel5_Escher
 {
@@ -250,16 +250,16 @@ class PHPExcel_Reader_Excel5_Escher
 		$foDelay = PHPExcel_Reader_Excel5::_GetInt4d($recordData, 28);
 
 		// offset: 32; size: 1; unused1
-		$unused1 = ord($recordData{32});
+		$unused1 = ord($recordData[32]);
 
 		// offset: 33; size: 1; size of nameData in bytes (including null terminator)
-		$cbName = ord($recordData{33});
+		$cbName = ord($recordData[33]);
 
 		// offset: 34; size: 1; unused2
-		$unused2 = ord($recordData{34});
+		$unused2 = ord($recordData[34]);
 
 		// offset: 35; size: 1; unused3
-		$unused3 = ord($recordData{35});
+		$unused3 = ord($recordData[35]);
 
 		// offset: 36; size: $cbName; nameData
 		$nameData = substr($recordData, 36, $cbName);
@@ -301,7 +301,7 @@ class PHPExcel_Reader_Excel5_Escher
 		}
 
 		// offset: var; size: 1; tag
-		$tag = ord($recordData{$pos});
+		$tag = ord($recordData[$pos]);
 		$pos += 1;
 
 		// offset: var; size: var; the raw image data
@@ -342,7 +342,7 @@ class PHPExcel_Reader_Excel5_Escher
 		}
 
 		// offset: var; size: 1; tag
-		$tag = ord($recordData{$pos});
+		$tag = ord($recordData[$pos]);
 		$pos += 1;
 
 		// offset: var; size: var; the raw image data

@@ -15,7 +15,7 @@ class percent_result extends CI_Controller
         $this->load->model("test_model_g");
         $this->load->model("test_model_r");
         $this->load->library('authentication');
-        $this->load->library('encrypt');
+        $this->load->library('encryption');
 
     }
 

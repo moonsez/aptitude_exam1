@@ -188,15 +188,12 @@
 								</div> -->
 
 								<div class="col-md-3">
-    <?php if (
-        ( !empty($final_datetime) && date("Y-m-d H:i:s") > $final_datetime )
-        || empty($final_datetime)
-    ) { ?>
-        <a type="button" class="btn green pull-right"
-           href="<?php echo base_url(); ?>user_test_res">
-           Test Results
-        </a>
-    <?php } ?>
+<?php if (!empty($final_datetime) && date("Y-m-d H:i:s") > $final_datetime) { ?>
+    <a type="button" class="btn green pull-right"
+       href="<?php echo base_url(); ?>user_test_res">
+       Test Results
+    </a>
+<?php } ?>
 </div>
 								<div class="col-md-3">
 									<?php if (isset($test_data) && !empty($test_data) && !empty($final_datetime) && $final_datetime >= $test_data->test_datetime && date('Y-m-d H:i:s') <= $final_datetime) { ?>

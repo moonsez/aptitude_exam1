@@ -187,7 +187,7 @@
                                     </div>
                                     <div class="actions">
                                         <a class="btn yellow btn-sm"
-                                            href="<?php echo base_url('uploads/que_excel/question_temp.xlsx'); ?>"
+                                            href="<?php echo base_url('uploads/uploads/que_excel/question_temp.xlsx'); ?>"
                                             download>
                                             <i class="fa fa-file-excel-o" aria-hidden="true"></i>
                                             Download Question Form Template
