@@ -230,10 +230,17 @@
 													<label class="control-label">Exam Start Date<span
 															class="required"
 															aria-required="true">*</span></label>
-													<div class="">
+													<!-- <div class="">
 														<input type="datetime-local" id="test_datetime"
 															name="test_datetime" class="form-control" value="<?php echo (isset($singleTestConfiguration->test_datetime) && !empty($singleTestConfiguration->test_datetime)) ? strftime('%Y-%m-%dT%H:%M:%S', strtotime($singleTestConfiguration->test_datetime)) : ''; ?>" required/>
-													</div>
+													</div> -->
+
+													<div class="">
+    <input type="datetime-local" id="test_datetime"
+        name="test_datetime" class="form-control"
+        value="<?php echo (isset($singleTestConfiguration->test_datetime) && !empty($singleTestConfiguration->test_datetime)) ? date('Y-m-d\TH:i:s', strtotime($singleTestConfiguration->test_datetime)) : ''; ?>"
+        required/>
+</div>
 												</div>
 											</div>
 
