@@ -51,7 +51,8 @@ class Imageupload
 		$rename_name=isset($array['rename_name'])?$array['rename_name']:'';//compulsary if renamed
 		
 		$config['upload_path'] = $uploadpath;
-		$config['allowed_types'] = '*';
+		// $config['allowed_types'] = '*';
+		$config['allowed_types'] = 'xls|xlsx';
 		$config['max_width']  = $max_width;
 		$config['max_height']  =$max_height;
 		$config['overwrite']  = $overwrite;

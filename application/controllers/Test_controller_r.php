@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 class Test_controller_r extends CI_Controller {
 
 
@@ -407,6 +410,7 @@ class Test_controller_r extends CI_Controller {
 
     public function save_import_questions()
     {
+       
         $this->load->library('excel');
         $dept_name = $this->input->post('dept_name');
         $location = $this->input->post('location');
@@ -435,6 +439,7 @@ class Test_controller_r extends CI_Controller {
          
         if (isset($file_name) && !empty($file_name)) {
             $data = $this->excel->read_excel_data('./uploads/uploads/que_excel/' . $file_name);
+            
            
         }
         

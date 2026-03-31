@@ -410,7 +410,7 @@ class PHPExcel_Shared_String
         return $value;
     }
 
-    // else, no conversion
+    
     return $value;
 }
 
