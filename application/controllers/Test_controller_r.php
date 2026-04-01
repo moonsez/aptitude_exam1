@@ -268,13 +268,17 @@ class Test_controller_r extends CI_Controller {
         $locationData=$this->input->post('location');
         
         $reference=$this->input->post('reference');
-        $option=$this->input->post('option');
+        // $option=$this->input->post('option');
+        $option = $this->input->post('option') ?? [];
         $ans_option=$this->input->post('ans_option');
-        $option_image=$this->input->post('option_image');
+        // $option_image=$this->input->post('option_image');
+        $option_image = $this->input->post('option_image') ?? [];
         $test_name=$this->input->post('test_name');
 
-        $optioncount=count($option);
-        $imagecount=count($option_image);
+        // $optioncount=count($option);
+        $optioncount = is_array($option) ? count($option) : 0;
+        // $imagecount=count($option_image);
+        $imagecount  = is_array($option_image) ? count($option_image) : 0;
        
         
         if(isset($option) && !empty($option) || isset($option_image) && !empty($option_image))
