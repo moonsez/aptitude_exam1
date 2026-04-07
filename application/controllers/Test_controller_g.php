@@ -379,78 +379,163 @@ class Test_controller_g extends CI_Controller
         }
     }
 
+    // public function submit_test()
+    // {
+    //     $this->load->model("test_model_g");
+    //     $user_id = $this->session->userdata("user_id");
+    //     $login_id = $this->session->userdata("login_id");
+    //     $test_id = $this->input->post('test_id');
+    //     $test_status = 'submitted';
+    //     $start_time = $this->input->post("start_time");
+    //     $submitted_time = date('Y-m-d H:i:s');
+    //     $attempted_test = $this->percent_model->get_employee_latest_data($test_id, $user_id, $test_status);
+
+    //     if ($attempted_test) {
+    //         $data = array(
+    //             'valid' => false,
+    //             'msg' => "You have already submitted this test!",
+    //             'redirect' => base_url("aptitude_exam_login/" . $user_id) // Correct redirection URL
+    //         );
+
+    //         $this->json->jsonReturn($data);
+    //         return;
+    //     }
+
+    //     $user_test_data = array(
+    //         'test_id' => $test_id,
+    //         'user_id' => $user_id,
+
+    //         'login_id' => $login_id,
+    //         'test_date' => date('Y-m-d'),
+    //         'test_status' => 'submitted',
+    //         'start_time' => $start_time,
+    //         'submitted_time' => $submitted_time
+    //     );
+
+
+    //     $hidden_question_array = $this->input->post('hidden_question_list');
+    //     $question_list = unserialize(base64_decode($hidden_question_array));
+    //     foreach ($question_list as $key) {
+    //         $user_que_data[] = array(
+    //             "user_id" => $user_id,
+    //             "question_id" => $key,
+    //             "option_id" => $this->input->post("answer_" . $key),
+    //             "user_test_id" => ''
+    //         );
+    //     }
+    //     // print_r( $user_que_data);
+    //     // die();
+    //     $result = $this->test_model_g->save_test($user_test_data, $user_que_data);
+    //     $user_info = $this->percent_model->check_user_type($login_id);
+
+    //     if ($user_info && $user_info->user_type === "Intern") {
+    //         $redirect_url = "intern_aptitude_exam_login/" . $user_id;
+    //     } else {
+    //         $redirect_url = "aptitude_exam_login/" . $user_id;
+    //     }
+
+    //     if ($result) {
+    //         $data = array(
+    //             'valid' => true,
+    //             'msg' => "Test response has been submitted successfully.",
+    //             'redirect' => $redirect_url
+    //         );
+    //     } else {
+    //         $data = array(
+    //             'valid' => false,
+    //             'msg' => "Unable to save test. Please try again.",
+    //             'redirect' => $redirect_url
+    //         );
+    //     }
+
+    //     $this->json->jsonReturn($data);
+    // }
+
+
+
+
+
+
     public function submit_test()
-    {
-        $this->load->model("test_model_g");
-        $user_id = $this->session->userdata("user_id");
-        $login_id = $this->session->userdata("login_id");
-        $test_id = $this->input->post('test_id');
-        $test_status = 'submitted';
-        $start_time = $this->input->post("start_time");
-        $submitted_time = date('Y-m-d H:i:s');
-        $attempted_test = $this->percent_model->get_employee_latest_data($test_id, $user_id, $test_status);
+{
+    $this->load->model("test_model_g");
+    $user_id = $this->session->userdata("user_id");
+    $login_id = $this->session->userdata("login_id");
+    $test_id = $this->input->post('test_id');
+    $test_status = 'submitted';
+    $start_time = $this->input->post("start_time");
 
-        if ($attempted_test) {
-            $data = array(
-                'valid' => false,
-                'msg' => "You have already submitted this test!",
-                'redirect' => base_url("aptitude_exam_login/" . $user_id) // Correct redirection URL
-            );
+  
+    $test_config = $this->db->where('test_configuration_id', $test_id)
+                            ->get('tbl_test_configuration')->row();
+    $test_duration_seconds = $test_config->test_time * 60;
 
-            $this->json->jsonReturn($data);
-            return;
-        }
+   
+    $max_submit_time = strtotime($start_time) + $test_duration_seconds;
+    $actual_now      = time();
 
-        $user_test_data = array(
-            'test_id' => $test_id,
-            'user_id' => $user_id,
+    
+    $submitted_time  = date('Y-m-d H:i:s', min($actual_now, $max_submit_time));
 
-            'login_id' => $login_id,
-            'test_date' => date('Y-m-d'),
-            'test_status' => 'submitted',
-            'start_time' => $start_time,
-            'submitted_time' => $submitted_time
+    $attempted_test = $this->percent_model->get_employee_latest_data($test_id, $user_id, $test_status);
+
+    if ($attempted_test) {
+        $data = array(
+            'valid' => false,
+            'msg' => "You have already submitted this test!",
+            'redirect' => base_url("aptitude_exam_login/" . $user_id)
         );
 
-
-        $hidden_question_array = $this->input->post('hidden_question_list');
-        $question_list = unserialize(base64_decode($hidden_question_array));
-        foreach ($question_list as $key) {
-            $user_que_data[] = array(
-                "user_id" => $user_id,
-                "question_id" => $key,
-                "option_id" => $this->input->post("answer_" . $key),
-                "user_test_id" => ''
-            );
-        }
-        // print_r( $user_que_data);
-        // die();
-        $result = $this->test_model_g->save_test($user_test_data, $user_que_data);
-        $user_info = $this->percent_model->check_user_type($login_id);
-
-        if ($user_info && $user_info->user_type === "Intern") {
-            $redirect_url = "intern_aptitude_exam_login/" . $user_id;
-        } else {
-            $redirect_url = "aptitude_exam_login/" . $user_id;
-        }
-
-        if ($result) {
-            $data = array(
-                'valid' => true,
-                'msg' => "Test response has been submitted successfully.",
-                'redirect' => $redirect_url
-            );
-        } else {
-            $data = array(
-                'valid' => false,
-                'msg' => "Unable to save test. Please try again.",
-                'redirect' => $redirect_url
-            );
-        }
-
         $this->json->jsonReturn($data);
+        return;
     }
 
+    $user_test_data = array(
+        'test_id' => $test_id,
+        'user_id' => $user_id,
+        'login_id' => $login_id,
+        'test_date' => date('Y-m-d'),
+        'test_status' => 'submitted',
+        'start_time' => $start_time,
+        'submitted_time' => $submitted_time  
+    );
+
+    $hidden_question_array = $this->input->post('hidden_question_list');
+    $question_list = unserialize(base64_decode($hidden_question_array));
+    foreach ($question_list as $key) {
+        $user_que_data[] = array(
+            "user_id" => $user_id,
+            "question_id" => $key,
+            "option_id" => $this->input->post("answer_" . $key),
+            "user_test_id" => ''
+        );
+    }
+
+    $result = $this->test_model_g->save_test($user_test_data, $user_que_data);
+    $user_info = $this->percent_model->check_user_type($login_id);
+
+    if ($user_info && $user_info->user_type === "Intern") {
+        $redirect_url = "intern_aptitude_exam_login/" . $user_id;
+    } else {
+        $redirect_url = "aptitude_exam_login/" . $user_id;
+    }
+
+    if ($result) {
+        $data = array(
+            'valid' => true,
+            'msg' => "Test response has been submitted successfully.",
+            'redirect' => $redirect_url
+        );
+    } else {
+        $data = array(
+            'valid' => false,
+            'msg' => "Unable to save test. Please try again.",
+            'redirect' => $redirect_url
+        );
+    }
+
+    $this->json->jsonReturn($data);
+}
 
     public function submit_email_test()
     {
